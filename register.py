@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import json
 import os
 import file_handler
@@ -45,7 +46,9 @@ def student_registration(first_name,last_name,student_code,national_code,major):
                 for dictionary in data:
                     students_log_in_information.append(dictionary)
     with open('StudentsLog_In_file.json', 'w') as file:
-        student_log_in_dict = {'user_name':national_code, 'password':student_code ,'locked':0}
+        password=hashlib.sha224(student_code.encode())
+        password=password.hexdigest()
+        student_log_in_dict = {'user_name':national_code, 'password':password ,'locked':0}
         students_log_in_information.append(student_log_in_dict)
         json.dump(students_log_in_information, file)
     if execute_counter_2 == 0:
@@ -74,6 +77,8 @@ def education_resp_registration(user_name,password):
                 for dictionary in data:
                     education_responsible_information.append(dictionary)
     with open('EducationR_Log_In_file.json','w') as e_file:
+        password=hashlib.sha224(password.encode())
+        password=password.hexdigest()
         e_log_in_dict={'user_name':user_name,'password':password ,'locked':0}
         education_responsible_information.append(e_log_in_dict)
         json.dump(education_responsible_information,e_file)
@@ -82,55 +87,71 @@ def education_resp_registration(user_name,password):
     logging.info("Welcome !you have been successfully registered")
 
 
-def student_log_in(password):
+def student_log_in(user_name,password):
     record_find = 0
     record_locked = 0
+    user_name_find = 0
+    password_find = 0
+    password=hashlib.sha224(password.encode())
+    password=password.hexdigest()
     with open('StudentsLog_In_file.json', 'r') as students_file:
         data=json.load(students_file)
         for dictionary in data:
+            if dictionary['user_name'] == user_name:
+                user_name_find = 1
             if dictionary['password'] == password:
+                password_find = 1
+            if user_name_find == 1 and password_find == 1:
                 record_find = 1
-                logging.info(f"user with password {password} has a record in system.")
+                logging.info(f"user with password {password} password has a record in system.")
                 if dictionary['locked'] == 0:
-                    logging.info(f"user with password {password} is not locked.")
+                    logging.info(f"user with password {password} password is not locked.")
                     break
                 elif dictionary['locked'] == 1:
-                    logging.info(f"user with password {password} is locked.")
+                    logging.info(f"user with password {password} password is locked.")
                     record_locked = 1
-        return record_find,record_locked
+                    break
+        return user_name_find,password_find,record_find,record_locked
 
 
-def education_resp_log_in(password):
+def education_resp_log_in(user_name,password):
     record_find = 0
     record_locked = 0
+    user_name_find = 0
+    password_find = 0
+    password = hashlib.sha224(password.encode())
+    password = password.hexdigest()
     with open('EducationR_Log_In_file.json', 'r') as file:
         data = json.load(file)
         for dictionary in data:
+            if dictionary['user_name'] == user_name:
+                user_name_find = 1
             if dictionary['password'] == password:
-                logging.info(f"user with password {password} has a record in system.")
+                password_find = 1
+            if user_name_find == 1 and password_find == 1:
                 record_find = 1
+                logging.info(f"user with password {password} password has a record in system.")
                 if dictionary['locked'] == 0:
-                    logging.info(f"user with password {password} is not locked.")
+                    logging.info(f"user with password {password} password is not locked.")
                     break
                 elif dictionary['locked'] == 1:
-                    logging.info(f"user with password {password} is locked.")
+                    logging.info(f"user with password {password} password is locked.")
                     record_locked = 1
-        return record_find, record_locked
+                    break
+        return user_name_find, password_find, record_find, record_locked
 
 
-def lock_acount(file_name,user_name):
-    accounts_information_list = []
-    account=file_handler.search_in_file(file_name,'user_name',user_name)
-    account_dictionary=account[0]
+def lock_acount(file_name,user_name=None,password=None):
+    if user_name:
+        account=file_handler.search_in_file(file_name,'user_name',user_name)
+        account_dictionary=account[0]
     with open(file_name,'r') as file:
         data=json.load(file)
-        for dictionary in data:
-            accounts_information_list.append(dictionary)
-    for item in accounts_information_list:
-        if account_dictionary == item:
-            item['locked'] = 1
+    for dictionary in data:
+        if account_dictionary == dictionary:
+            dictionary['locked'] = 1
     with open(file_name,'w') as myfile:
-        json.dump(accounts_information_list,myfile)
+        json.dump(data,myfile)
     print("your account has been locked.")
     logging.info(f"the account with {user_name} user name is locked.")
 
@@ -182,6 +203,8 @@ def checking_education_responsible_national_code(national_code):
                 if NationalCode == national_code:
                     logging.info("admins national code had been found in the file")
                     return True
+
+
 
 
 
