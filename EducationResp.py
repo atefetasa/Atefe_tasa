@@ -1,5 +1,6 @@
 import json
 import logging
+import file_handler
 logging.basicConfig(filename='logfile.log',filemode='w',level=logging.DEBUG,format='%(levelname)s:%(asctime)s:%(message)s')
 
 
@@ -10,14 +11,35 @@ class EducationResponsible:
 
     @staticmethod
     def choose_student(student_code):
-        return f"with this method education responsible can choose a student " \
-               f"by his student code and see which courses he/she had choosed .this method is a static method because " \
-               f"it works with files not objects"
+        student_choose_courses = 0
+        student_exist = 0
+        student=file_handler.search_in_file('students_courses.json','student_code',student_code)
+        if student:
+            dictionary=student[0]
+            print(f"the number of units this student has taken:{dictionary['number_of_units']}")
+            print("the list of course this student has taken:")
+            for course in dictionary['courses_list']:
+                print(course)
+            student_exist = 1
+            student_choose_courses = 1
+        else:
+            if file_handler.search_in_file('students.json','student_code',student_code):
+                print("this student has not chosen any courses yet.")
+                student_exist = 1
+            else:
+                print("there is no student with this student code in system.")
+        return student_exist,student_choose_courses
 
     @staticmethod
     def all_students_list():
-        return f"this method only returns the names and student codes of students " \
-               f"so education responsible can choose a student."
+        with open('students.json','r') as file:
+            data=json.load(file)
+            for student in data:
+                dictionary={'first_name':student['first_name'],
+                            'last_name':student['last_name'],'student_code':student['student_code'],
+                            'major':student['major']}
+                print(dictionary)
+
     @classmethod
     def add_education_responsible(cls,user_name,password):
         logging.info("the education responsible object has been created.")

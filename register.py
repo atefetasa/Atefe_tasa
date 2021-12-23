@@ -4,6 +4,7 @@ import json
 import os
 import file_handler
 import logging
+import time
 logging.basicConfig(filename='logfile.log',filemode='w',level=logging.DEBUG,format='%(levelname)s:%(asctime)s:%(message)s')
 
 
@@ -171,6 +172,7 @@ def education_resp_log_in(user_name,password):
 
 
 def lock_acount(file_name,user_name=None,password=None):
+    sec = 180
     if user_name:
         account=file_handler.search_in_file(file_name,'user_name',user_name)
         account_dictionary=account[0]
@@ -186,6 +188,26 @@ def lock_acount(file_name,user_name=None,password=None):
         json.dump(data,myfile)
     print("your account has been locked.")
     logging.info(f"the account with {user_name} user name is locked.")
+    time.sleep(sec)
+    unlock_account(file_name,user_name,password)
+
+
+def unlock_account(file_name,user_name=None,password=None):
+    if user_name:
+        account=file_handler.search_in_file(file_name,'user_name',user_name)
+        account_dictionary=account[0]
+    elif password:
+        account = file_handler.search_in_file(file_name, 'password', password)
+        account_dictionary = account[0]
+    with open(file_name,'r') as file:
+        data=json.load(file)
+    for dictionary in data:
+        if account_dictionary == dictionary:
+            if dictionary['locked'] == 1:
+                dictionary['locked'] = 0
+    with open(file_name,'w') as myfile:
+        json.dump(data,myfile)
+    logging.info(f"the account is unlocked.")
 
 
 def password_validation(password):
