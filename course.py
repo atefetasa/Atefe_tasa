@@ -31,7 +31,8 @@ class Course:
                 course['capacity'] = self.capacity
                 break
         with open('courses.json','w') as file:
-            json.dump(Course.course,file)
+            json.dump(Course.courses,file)
+        Course.execute_counter +=1
 
     @classmethod
     def add_course(cls,course_name,teacher_name,unit,capacity,course_group):
@@ -41,7 +42,6 @@ class Course:
     def __str__(self):
         return {'course_name':self.course_name,'teacher_name':self.teacher_name,
                 'unit':self.unit,'capacity':self.capacity,'course_group':self.course_group}
-
 
 
 

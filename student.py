@@ -16,6 +16,7 @@ class Student:
         self.major=major
         self.number_of_units = ''
         self.courses_list=[]
+        self.chosen_courses_objects = []
 
     def check_unit_numbers_range(self):
         if self.number_of_units > 20 or self.number_of_units < 10:
@@ -37,49 +38,67 @@ class Student:
             elif flag == 0:
                 self.number_of_units = 0
 
+    @staticmethod
+    def find_and_make_an_instance(course_name):
+        c_list = file_handler.search_in_file('courses.json', 'course_name', course_name)
+        dictionary = c_list[0]
+        chosen_course = course.Course.add_course(course_name, dictionary['teacher_name'], dictionary['unit'],
+                                                 dictionary['capacity'], dictionary['course_group'])
+        return chosen_course
+
     def select_units(self, course_name):
         if self.number_of_units == '':
             self.specify_number_of_units()
-        if Student.execute_counter == 0:
-            with open('students_courses.json','r') as file:
-                data=json.load(file)
-                if data:
-                    for dictionary in data:
-                        Student.students_unit_selection_information.append(dictionary)
         if self.number_of_units < 20:
             with open('courses.json','r') as file:
                 data=json.load(file)
-                for course in data:
-                    if course['course_name'] == course_name:
-                        if course['unit']+self.number_of_units > 20:
-                            print("you can Not take tis course because your units summation is more than 20 units ")
-                            break
+            for course in data:
+                if course['course_name'] == course_name:
+                    if course['unit']+self.number_of_units > 20:
+                        print("you can Not take tis course because your units summation is more than 20 units ")
+                        break
+                    else:
+                        chosen_course=Student.find_and_make_an_instance(course_name)
+                        if chosen_course.check_capacity():
+                            self.number_of_units += chosen_course.unit
+                            self.courses_list.append({'course_name':course_name,
+                                                      'teacher_name':chosen_course.teacher_name,
+                                                      'unit':chosen_course.unit,
+                                                      'course_group':chosen_course.course_group,
+                                                      'course_confirm':0
+                                                    })
+                            self.chosen_courses_objects.append(chosen_course)
                         else:
-                            if self.number_of_units == 0:
-                                c_list=file_handler.search_in_file('courses.json','course_name',course_name)
-                                dictionary=c_list[0]
-                                teacher_name = dictionary['teacher_name']
-                                unit = dictionary['unit']
-                                course_group = dictionary['course_group']
-                                capacity = dictionary['capacity']
-                                chosen_course = course.Course.add_course(course_name, teacher_name, unit,
-                                                                         capacity, course_group)
-                                if chosen_course.check_capacity():
-                                    taken_course_information={'course_name':course_name,'teacher_name':teacher_name,
-                                                              'unit':unit,'course_group':course_group,'course_confirm':0}
-                                    self.courses_list.append(taken_course_information)
-                                    self.number_of_units+=unit
-                                    student_dict={'student_code':self.student_code,
-                                                  'number_of_units':self.number_of_units
-                                                  ,'course_list':self.courses_list}
-                                    Student.students_unit_selection_information.append(student_dict)
+                            print("this course doesn't have capacity to take.")
+                        break
+        else:
+            print("you can not take more than 20 units.")
+        return self
+
+    def final_unit_selection_registration(self):
+        check_units=self.check_unit_numbers_range()
+        if check_units:
+            self.chosen_courses_objects=[course_object.reduce_capacity()
+                                         for course_object
+                                         in self.chosen_courses_objects]
+            search_result=file_handler.search_in_file('students_courses.json','student_code',self.student_code)
+            if search_result:
+                search_result=search_result[0]
+            else:
+                student_courses={'student_code':self.student_code,
+                                 'number_of_units':self.number_of_units,
+                                 'courses_list':self.courses_list
+                }
+                Student.students_unit_selection_information.append(student_courses)
 
 
 
 
-
-
-
+    def show_chosen_courses(self):
+        print(f"the numbers of units you have chosen: {self.number_of_units}")
+        print("so far you have chosen this courses:")
+        for item in self.courses_list:
+            print(item)
 
     @classmethod
     def add_student(cls,first_name,last_name,student_code,national_code,major):
