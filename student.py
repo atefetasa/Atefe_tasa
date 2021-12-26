@@ -55,7 +55,7 @@ class Student:
             for course in data:
                 if course['course_name'] == course_name:
                     if course['unit']+self.number_of_units > 20:
-                        print("you can Not take tis course because your units summation is more than 20 units ")
+                        print("you can Not take this course because your units summation is more than 20 units ")
                         break
                     else:
                         chosen_course=Student.find_and_make_an_instance(course_name)
@@ -83,16 +83,64 @@ class Student:
                                          in self.chosen_courses_objects]
             search_result=file_handler.search_in_file('students_courses.json','student_code',self.student_code)
             if search_result:
-                search_result=search_result[0]
+                with open('students_courses.json', 'r') as file:
+                    Student.students_unit_selection_information = json.load(file)
+                    for item in Student.students_unit_selection_information:
+                        if item['student_code'] == self.student_code:
+                            item['number_of_units'] = self.number_of_units
+                            for dictionary in self.courses_list:
+                                item['courses_list'].append(dictionary)
+                            break
+                with open('students_courses.json','w') as file:
+                    json.dump(Student.students_unit_selection_information,file)
+                Student.execute_counter += 1
+                return True
             else:
                 student_courses={'student_code':self.student_code,
                                  'number_of_units':self.number_of_units,
                                  'courses_list':self.courses_list
                 }
                 Student.students_unit_selection_information.append(student_courses)
+                if Student.execute_counter == 0:
+                    with open('students_courses.json','r') as file:
+                        data=json.load(file)
+                        if data:
+                            for dictionary in data:
+                                Student.students_unit_selection_information.append(dictionary)
+                with open('students_courses.json','w') as file:
+                    json.dump(Student.students_unit_selection_information,file)
+                Student.execute_counter += 1
+                return True
+        else:
+            print("your number of units should be in range 10 to 20.")
+            return False
 
-
-
+    def prevent_duplicate_courses_in_unit_selection(self,course_name):
+        flag = 0
+        search_result = file_handler.search_in_file('students_courses.json', 'student_code', self.student_code)
+        if search_result:
+            if self.courses_list:
+                for item in self.courses_list:
+                    if item['course_name'] == course_name:
+                        flag = 1
+                        break
+            with open('students_courses.json','r') as file:
+                data=json.load(file)
+                for dictionary in data:
+                    if dictionary['student_code'] == self.student_code:
+                        for item in dictionary['courses_list']:
+                            if item['course_name'] == course_name:
+                                flag = 1
+                                break
+        else:
+            for item in self.courses_list:
+                if item['course_name'] == course_name:
+                    flag = 1
+                    break
+        if flag == 1:
+            return False
+        elif flag == 0:
+            return True
 
     def show_chosen_courses(self):
         print(f"the numbers of units you have chosen: {self.number_of_units}")

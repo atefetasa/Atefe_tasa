@@ -1,5 +1,7 @@
 import json
 
+import register
+
 
 class Course:
     courses = []
