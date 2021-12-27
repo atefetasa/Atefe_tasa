@@ -234,7 +234,10 @@ def password_validation(password):
 def check_entered_password(file_name,user_name,password):
     counter = 1
     while counter <= 3:
-        validation = student_log_in(user_name,password)
+        if file_name == 'StudentsLog_In_file.json':
+            validation = student_log_in(user_name,password)
+        elif file_name == 'EducationR_Log_In_file.json':
+            validation = education_resp_log_in(user_name, password)
         if validation[2] == 1 and validation[3] == 0:
             print("welcome!you have logged in.")
             logging.info(f"the user with {password} has been logged in.")

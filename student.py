@@ -143,8 +143,13 @@ class Student:
             return True
 
     def show_chosen_courses(self):
+        search_result = file_handler.search_in_file('students_courses.json', 'student_code', self.student_code)
         print(f"the numbers of units you have chosen: {self.number_of_units}")
         print("so far you have chosen this courses:")
+        if search_result:
+            search_result=search_result[0]
+            for dictionary in search_result['courses_list']:
+                print(dictionary)
         for item in self.courses_list:
             print(item)
 

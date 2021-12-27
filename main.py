@@ -33,15 +33,32 @@ if log_in == '1':
         if registration_validation:
             print("\n")
             print(
-                f"please attention \n your user name is your national code: {user_name}\n your password is your student code:"
-                f"{password}")
+                f"please attention \n your user name is your national code: {user_name}\n "
+                f"your password is your student code:{password}\n")
             logging.info(f"the user name and password was shown to the user with {password} password.")
             new_student = student.Student.add_student(first_name, last_name, student_code, national_code, major)
             courses_list = new_student.show_choosable_courses()
-            print("you can choose these courses:")
-            for course in courses_list:
-                print(f"{course}\n")
-            logging.info("the courses had been shown to the student.")
+            if courses_list:
+                print("you can choose these courses:")
+                for course in courses_list:
+                    print(f"{course}\n")
+                print('\n')
+            else:
+                print("we have no courses for your major to show you.")
+            while True:
+                course_name = str(input("Enter the course name you want to choose:"))
+                result=new_student.prevent_duplicate_courses_in_unit_selection(course_name)
+                if result:
+                    new_student=new_student.select_units(course_name)
+                    new_student.show_chosen_courses()
+                    user_input_2=input("\ndo you want to do the final register?\n 1)Yes\n 2)No")
+                    if user_input_2 == '1':
+                        result_2=new_student.final_unit_selection_registration()
+                        if result_2:
+                            print("your selected units has been successfully registered.")
+                            break
+                else:
+                    print("you can not select one course two times.")
     elif user_input1 == '2':
         user_name = input("please enter your national code:")
         if register.checking_education_responsible_national_code(user_name):
@@ -57,7 +74,7 @@ if log_in == '1':
             if registration_validation:
                 print("\n")
                 print(f"please attention \n your user name is your national code: {user_name}\n your password is:"
-                      f"{password}")
+                      f"{password}\n")
                 logging.info(f"the user name and password was shown to the user with {password} password.")
 
                 user_input2 = input("what do you want to do:\n 1)define a new course\n 2)see the list of students \n")
@@ -71,20 +88,28 @@ if log_in == '1':
                     course1 = course.Course.add_course(course_name, teacher_name, unit, capacity, course_group)
                 elif user_input2 == '2':
                     EducationResp.EducationResponsible.all_students_list()
-                    user_input3 = input("which one of these students do you want to choose\n "
-                                        "to see more information about him/her?\n"
-                                        "please enter his/her student code:")
-                    EducationResp.EducationResponsible.choose_student(user_input3)
-                    user_input4 = input("do you confirm all his/her courses or not?\n 1)Yes\n 2)No")
-                    if user_input4 == '1':
-                        EducationResp.EducationResponsible.confirm_student_all_courses(user_input3)
-                    elif user_input4 == '2':
-                        while True:
-                            user_input5 = str(input("please enter the course name you want to reject:"))
-                            EducationResp.EducationResponsible.reject_student_course(user_input3, user_input5)
-                            user_input6 = input("do you want to reject another course?\n 1)Yes \n 2)No")
-                            if user_input6 == '2':
+                    while True:
+                        user_input3 = input("\nwhich one of these students do you want to choose\n "
+                                            "to see his/her selected courses?\n"
+                                            "please enter his/her student code:")
+                        student_status=EducationResp.EducationResponsible.choose_student(user_input3)
+                        if student_status[0] == 1 and student_status[1] == 1:
+                            user_input4 = input("do you confirm all his/her courses or not?\n 1)Yes\n 2)No")
+                            if user_input4 == '1':
+                                EducationResp.EducationResponsible.confirm_student_all_courses(user_input3)
+                            elif user_input4 == '2':
+                                while True:
+                                    user_input5 = str(input("please enter the course name you want to reject:"))
+                                    EducationResp.EducationResponsible.reject_student_course(user_input3, user_input5)
+                                    user_input6 = input("do you want to reject another course?\n 1)Yes \n 2)No")
+                                    if user_input6 == '2':
+                                        break
                                 break
+                        elif student_status[0] == 1 and student_status[1] == 0:
+                            print("\nthis student has not selected any units yet.")
+                            break
+                        elif student_status[0] == 0 and student_status[1] == 0:
+                            print("\nyou have entered an incorrect student code this student code doesn't exist")
         else:
             print("you have not the permission to register as education responsible \n"
                   "because your national code has not been registered as admin in system.")
@@ -112,7 +137,7 @@ elif log_in == '2':
             else:
                 print("we have no courses for your major to show you.")
             while True:
-                course_name = str(input("\nEnter the course name you want to choose:"))
+                course_name = str(input("Enter the course name you want to choose:"))
                 result=new_student.prevent_duplicate_courses_in_unit_selection(course_name)
                 if result:
                     new_student=new_student.select_units(course_name)
@@ -125,6 +150,46 @@ elif log_in == '2':
                             break
                 else:
                     print("you can not select one course two times.")
+    elif user_input1 == '2':
+        new_password_and_user_name = register.check_entered_password('EducationR_Log_In_file.json', user_name, password)
+        status_tuple = register.education_resp_log_in(new_password_and_user_name[0], new_password_and_user_name[1])
+        if status_tuple[2] == 1 and status_tuple[3] == 0:
+            education_resp1 = EducationResp.EducationResponsible.add_education_responsible(user_name, password)
+            user_input2 = input("what do you want to do?\n1)define a new course\n2)see the list of students\n")
+            if user_input2 == '1':
+                course_name = input("enter the course name:")
+                teacher_name = input("enter the teacher name:")
+                unit = input("enter course number of units:")
+                capacity = input("enter the course capacity:")
+                course_group = input("enter the course group:")
+                register.course_registration(course_name, teacher_name, unit, capacity, course_group)
+                course1 = course.Course.add_course(course_name, teacher_name, unit, capacity, course_group)
+            elif user_input2 == '2':
+                EducationResp.EducationResponsible.all_students_list()
+                while True:
+                    user_input3 = input("\nwhich one of these students do you want to choose\n "
+                                        "to see his/her selected courses?\n"
+                                        "please enter his/her student code:")
+                    student_status=EducationResp.EducationResponsible.choose_student(user_input3)
+                    if student_status[0] == 1 and student_status[1] == 1:
+                        user_input4 = input("do you confirm all his/her courses or not?\n 1)Yes\n 2)No")
+                        if user_input4 == '1':
+                            EducationResp.EducationResponsible.confirm_student_all_courses(user_input3)
+                            break
+                        elif user_input4 == '2':
+                            while True:
+                                user_input5 = str(input("please enter the course name you want to reject:"))
+                                EducationResp.EducationResponsible.reject_student_course(user_input3, user_input5)
+                                user_input6 = input("do you want to reject another course?\n 1)Yes \n 2)No")
+                                if user_input6 == '2':
+                                    break
+                            break
+                    elif student_status[0] == 1 and student_status[1] == 0:
+                        print("\nthis student has not selected any units yet.")
+                        break
+                    elif student_status[0] == 0 and student_status[1] == 0:
+                        print("\nyou have entered an incorrect student code this student code doesn't exist")
+
 
 
 

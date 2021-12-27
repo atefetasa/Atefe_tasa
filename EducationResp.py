@@ -53,6 +53,8 @@ class EducationResponsible:
                 if dictionary['student_code'] == student_code:
                     for course in dictionary['courses_list']:
                         course['course_confirm'] = '1'
+        with open('students_courses.json','w') as file:
+            json.dump(data,file)
         print(f"all courses of student with {student_code} student code has been confirmed.")
         logging.info(f"all courses of student with {student_code} student code has been confirmed.")
 
@@ -65,6 +67,8 @@ class EducationResponsible:
                     for course in dictionary['courses_list']:
                         if course['course_name'] == course_name:
                             course['course_confirm'] = '0'
+        with open('students_courses.json','w') as file:
+            json.dump(data,file)
         print(f"the {course_name} rejection for {student_code} student was successfull.")
         logging.info(f"the {course_name} rejection for {student_code} student was successfull.")
 

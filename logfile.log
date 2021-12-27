@@ -1,0 +1,9 @@
+INFO:2021-12-26 19:52:44,734:user with password 9b3e61bf29f17c75572fae2e86e17809a4513d07c8a18152acf34521 password has a record in system.
+INFO:2021-12-26 19:52:44,735:user with password 9b3e61bf29f17c75572fae2e86e17809a4513d07c8a18152acf34521 password is not locked.
+INFO:2021-12-26 19:52:44,735:the user with 123456789 has been logged in.
+INFO:2021-12-26 19:52:44,735:user with password 9b3e61bf29f17c75572fae2e86e17809a4513d07c8a18152acf34521 password has a record in system.
+INFO:2021-12-26 19:52:44,735:user with password 9b3e61bf29f17c75572fae2e86e17809a4513d07c8a18152acf34521 password is not locked.
+INFO:2021-12-26 19:52:44,735:the education responsible object has been created.
+INFO:2021-12-26 19:52:57,017:the students_courses.json file exists.
+INFO:2021-12-26 19:52:57,018:the search has some results
+INFO:2021-12-26 19:53:26,028:the fluid mechanics rejection for 946321008 student was successfull.
