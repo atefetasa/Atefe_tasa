@@ -3,9 +3,8 @@ import hashlib
 import json
 import os
 import file_handler
-import logging
+import log
 import time
-logging.basicConfig(filename='logfile.log',filemode='w',level=logging.DEBUG,format='%(levelname)s:%(asctime)s:%(message)s')
 
 
 courses=[]
@@ -24,13 +23,12 @@ def course_registration(course_name, teacher_name, unit, capacity, course_group)
         with open('courses.json','r') as file:
             data = json.load(file)
             if data:
-                logging.info("file was not empty")
                 for dictionary in data:
                     courses.append(dictionary)
     with open('courses.json','w') as courses_file:
         flag = 0
-        course_dict={'course_name':course_name,'teacher_name':teacher_name,'unit':unit,
-                     'capacity':capacity,'course_group':course_group}
+        course_dict={'course_name':course_name,'teacher_name':teacher_name,'unit':int(unit),
+                     'capacity':int(capacity),'course_group':course_group}
         for dictionary in courses:
             if dictionary == course_dict:
                 flag = 1
@@ -41,7 +39,7 @@ def course_registration(course_name, teacher_name, unit, capacity, course_group)
         json.dump(courses, courses_file)
     execute_counter_1 += 1
     print(f"{course_name} course has been successfully added to the courses.")
-    logging.info(f"{course_name} course has been successfully added to the courses.")
+    log.info_logger.info(f"{course_name} course has been successfully added to the courses.",exc_info=True)
 
 
 def student_registration(first_name,last_name,student_code,national_code,major):
@@ -50,7 +48,6 @@ def student_registration(first_name,last_name,student_code,national_code,major):
         with open('StudentsLog_In_file.json', 'r') as file:
             data = json.load(file)
             if data:
-                logging.info("file was not empty!")
                 for dictionary in data:
                     students_log_in_information.append(dictionary)
     with open('StudentsLog_In_file.json', 'w') as file:
@@ -62,6 +59,8 @@ def student_registration(first_name,last_name,student_code,national_code,major):
             if student['user_name'] == student_log_in_dict['user_name']:
                 flag = 1
                 print("you already have registered in system before you don't need to register again.")
+                log.warning_logger.error("you already have registered in system before"
+                                         " you don't need to register again.",exc_info=True)
                 break
         if flag == 0:
             students_log_in_information.append(student_log_in_dict)
@@ -80,7 +79,7 @@ def student_registration(first_name,last_name,student_code,national_code,major):
             json.dump(students_information, students_file)
         execute_counter_2+=1
         print(" Welcome !you have been successfully registered")
-        logging.info("Welcome !you have been successfully registered")
+        log.info_logger.info("Welcome !you have been successfully registered")
         return True
     elif flag == 1:
         return False
@@ -92,7 +91,6 @@ def education_resp_registration(user_name,password):
         with open('EducationR_Log_In_file.json','r') as file:
             data=json.load(file)
             if data:
-                logging.info("file was not empty")
                 for dictionary in data:
                     education_responsible_information.append(dictionary)
     with open('EducationR_Log_In_file.json','w') as e_file:
@@ -104,13 +102,15 @@ def education_resp_registration(user_name,password):
             if dictionary['user_name'] == e_log_in_dict['user_name']:
                 flag = 1
                 print("you already have registered in system before you don't need to register again.")
+                log.warning_logger.error("you already have registered in system before"
+                                         " you don't need to register again.", exc_info=True)
                 break
         if flag == 0:
             education_responsible_information.append(e_log_in_dict)
         json.dump(education_responsible_information, e_file)
         if flag == 0:
             print("\n Welcome !you have been successfully registered")
-            logging.info("Welcome !you have been successfully registered")
+            log.info_logger.info("Welcome !you have been successfully registered")
             return True
         elif flag == 1:
             return False
@@ -126,21 +126,21 @@ def student_log_in(user_name,password):
     password=password.hexdigest()
     with open('StudentsLog_In_file.json', 'r') as students_file:
         data=json.load(students_file)
-        for dictionary in data:
+        for i,dictionary in enumerate(data):
             if dictionary['user_name'] == user_name:
+                counter_1 = i
                 user_name_find = 1
             if dictionary['password'] == password:
+                counter_2 = i
                 password_find = 1
             if user_name_find == 1 and password_find == 1:
-                record_find = 1
-                logging.info(f"user with password {password} password has a record in system.")
-                if dictionary['locked'] == 0:
-                    logging.info(f"user with password {password} password is not locked.")
-                    break
-                elif dictionary['locked'] == 1:
-                    logging.info(f"user with password {password} password is locked.")
-                    record_locked = 1
-                    break
+                if counter_1 == counter_2:
+                    record_find = 1
+                    if dictionary['locked'] == 0:
+                        break
+                    elif dictionary['locked'] == 1:
+                        record_locked = 1
+                        break
         return user_name_find,password_find,record_find,record_locked
 
 
@@ -160,12 +160,9 @@ def education_resp_log_in(user_name,password):
                 password_find = 1
             if user_name_find == 1 and password_find == 1:
                 record_find = 1
-                logging.info(f"user with password {password} password has a record in system.")
                 if dictionary['locked'] == 0:
-                    logging.info(f"user with password {password} password is not locked.")
                     break
                 elif dictionary['locked'] == 1:
-                    logging.info(f"user with password {password} password is locked.")
                     record_locked = 1
                     break
         return user_name_find, password_find, record_find, record_locked
@@ -177,6 +174,8 @@ def lock_acount(file_name,user_name=None,password=None):
         account=file_handler.search_in_file(file_name,'user_name',user_name)
         account_dictionary=account[0]
     elif password:
+        password = hashlib.sha224(password.encode())
+        password = password.hexdigest()
         account = file_handler.search_in_file(file_name, 'password', password)
         account_dictionary = account[0]
     with open(file_name,'r') as file:
@@ -187,7 +186,6 @@ def lock_acount(file_name,user_name=None,password=None):
     with open(file_name,'w') as myfile:
         json.dump(data,myfile)
     print("your account has been locked.")
-    logging.info(f"the account with {user_name} user name is locked.")
     time.sleep(sec)
     unlock_account(file_name,user_name,password)
 
@@ -207,7 +205,6 @@ def unlock_account(file_name,user_name=None,password=None):
                 dictionary['locked'] = 0
     with open(file_name,'w') as myfile:
         json.dump(data,myfile)
-    logging.info(f"the account is unlocked.")
 
 
 def password_validation(password):
@@ -227,7 +224,7 @@ def password_validation(password):
                 return False
     else:
         print("your password is not 9 digits.")
-        logging.info("the password was not 9 digits.")
+        log.warning_logger.error("the password was not 9 digits.")
         return False
 
 
@@ -240,25 +237,26 @@ def check_entered_password(file_name,user_name,password):
             validation = education_resp_log_in(user_name, password)
         if validation[2] == 1 and validation[3] == 0:
             print("welcome!you have logged in.")
-            logging.info(f"the user with {password} has been logged in.")
+            log.info_logger.info(f"the user with {password} password has been logged in.")
             break
         elif validation[2] == 1 and validation[3] == 1:
             print("you can not access to your account because it's locked")
-            logging.warning(f"the user with {password} password can not access to his/her account because its locked.")
+            log.warning_logger.error(f"the user with {password} password can not access "
+                                     f"to his/her account because its locked.")
             break
-        elif (validation[0] == 0 and validation[1] == 1) or (validation[0] == 1 and validation[1] == 0):
+        elif (validation[0] == 0 and validation[1] == 1) or (validation[0] == 1 and validation[1] == 0) or (validation[0] == 1 and validation[1] == 1 and validation[2] == 0):
             if counter == 3:
-                if validation[0] == 0 and validation[1] == 1:
+                if validation[1] == 1 and validation[2] == 0:
                     lock_acount(file_name, password=password)
-                    logging.info(f"he user with {password} password became locked")
+                    log.info_logger.info(f"the user with {password} password became locked")
                     counter+=1
                 elif validation[0] == 1 and validation[1] == 0:
                     lock_acount(file_name, user_name=user_name)
-                    logging.info("the user has became locked.")
+                    log.info_logger.info("the user has became locked.")
                     counter += 1
             else:
                 print("your user name or password is incorrect.")
-                logging.warning("the user has entered the wrong password or user name.")
+                log.warning_logger.warning("the user has entered the wrong password or user name.")
                 user_name = input("please re enter your user name:")
                 password = input("please re enter your password:")
                 counter += 1
@@ -274,7 +272,6 @@ def checking_education_responsible_national_code(national_code):
         for item in national_codes_list:
             for NationalCode in item:
                 if NationalCode == national_code:
-                    logging.info("admins national code had been found in the file")
                     return True
 
 

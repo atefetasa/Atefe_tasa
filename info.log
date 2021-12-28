@@ -1,0 +1,12 @@
+2021-12-27 22:41:27 ::INFO - register.py - the user with 123456789 has been logged in.
+2021-12-27 22:43:10 ::INFO - register.py - java programming course has been successfully added to the courses.
+NoneType: None
+2021-12-27 22:50:18 ::INFO - register.py - the user with 956321008 has been logged in.
+2021-12-27 22:55:52 ::INFO - register.py - the user with 956321008 has been logged in.
+2021-12-27 23:16:44 ::INFO - register.py - the user with 123456789 has been logged in.
+2021-12-27 23:17:33 ::INFO - register.py - maaref eslami course has been successfully added to the courses.
+NoneType: None
+2021-12-27 23:18:48 ::INFO - register.py - the user with 956321008 has been logged in.
+2021-12-27 23:19:08 ::INFO - student.py - the student with 956321008 student code has took java programming course.
+2021-12-27 23:27:08 ::INFO - register.py - the user with 946321008 password has been logged in.
+2021-12-28 00:39:00 ::INFO - register.py - the user with 946321008 password became locked

@@ -1,7 +1,6 @@
 import json
-import logging
+import log
 import file_handler
-logging.basicConfig(filename='logfile.log',filemode='w',level=logging.DEBUG,format='%(levelname)s:%(asctime)s:%(message)s')
 
 
 class EducationResponsible:
@@ -42,7 +41,6 @@ class EducationResponsible:
 
     @classmethod
     def add_education_responsible(cls,user_name,password):
-        logging.info("the education responsible object has been created.")
         return cls(user_name=user_name,password=password)
 
     @staticmethod
@@ -56,7 +54,8 @@ class EducationResponsible:
         with open('students_courses.json','w') as file:
             json.dump(data,file)
         print(f"all courses of student with {student_code} student code has been confirmed.")
-        logging.info(f"all courses of student with {student_code} student code has been confirmed.")
+        log.info_logger.info(f"all courses of student with {student_code} student code has been confirmed."
+                             ,exc_info=True)
 
     @staticmethod
     def reject_student_course(student_code,course_name):
@@ -70,6 +69,6 @@ class EducationResponsible:
         with open('students_courses.json','w') as file:
             json.dump(data,file)
         print(f"the {course_name} rejection for {student_code} student was successfull.")
-        logging.info(f"the {course_name} rejection for {student_code} student was successfull.")
+        log.info_logger.info(f"the {course_name} rejection for {student_code} student was successfully.",exc_info=True)
 
 

@@ -1,5 +1,5 @@
 import json
-import logging
+import log
 import course
 import file_handler
 
@@ -68,6 +68,8 @@ class Student:
                                                       'course_confirm':0
                                                     })
                             self.chosen_courses_objects.append(chosen_course)
+                            log.info_logger.info(f"the student with {self.student_code} student code"
+                                                 f" has took {course_name} course.")
                         else:
                             print("this course doesn't have capacity to take.")
                         break
@@ -110,6 +112,8 @@ class Student:
                 with open('students_courses.json','w') as file:
                     json.dump(Student.students_unit_selection_information,file)
                 Student.execute_counter += 1
+                log.info_logger.info(f"final unit selection of student with {self.student_code} student code"
+                                     f"has been done.")
                 return True
         else:
             print("your number of units should be in range 10 to 20.")
