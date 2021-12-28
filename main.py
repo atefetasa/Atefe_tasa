@@ -8,14 +8,6 @@ import course
 import log
 
 
-
-# register.course_registration('computer architeture','bahrai',4,25,'software engineering')
-# register.course_registration('basis economies','farrokh',3,30,'economics')
-# register.course_registration('water management','sadr',2,25,'management')
-# register.course_registration('algorithem','izadkhah',4,25,'software engineering')
-# register.course_registration('operating systems','lotfi',3,30,'software engineering')
-# register.course_registration('mechanics of materials','borhani',3,22,'civil engineering')
-
 log_in = input("do you have an account?\n 1)I don't have account (sign up)\n 2)I have an account (log in)\n")
 if log_in == '1':
     user_input1 = input("are you a student or education responsible?\n 1)student\n 2)Education Responsible\n")
@@ -184,7 +176,6 @@ elif log_in == '2':
                                     break
                             break
                     elif student_status[0] == 1 and student_status[1] == 0:
-                        print("\nthis student has not selected any units yet.")
                         break
                     elif student_status[0] == 0 and student_status[1] == 0:
                         print("\nyou have entered an incorrect student code this student code doesn't exist")

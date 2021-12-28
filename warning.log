@@ -5,3 +5,12 @@
 2021-12-28 00:27:27 ::WARNING - register.py - the user has entered the wrong password or user name.
 2021-12-28 00:35:19 ::WARNING - register.py - the user has entered the wrong password or user name.
 2021-12-28 00:35:40 ::WARNING - register.py - the user has entered the wrong password or user name.
+2021-12-28 00:56:12 ::WARNING - register.py - the user has entered the wrong password or user name.
+2021-12-28 00:56:46 ::WARNING - register.py - the user has entered the wrong password or user name.
+2021-12-28 00:58:17 ::ERROR - register.py - the user with 956321008 password can not access to his/her account because its locked.
+2021-12-28 01:01:32 ::WARNING - register.py - the user has entered the wrong password or user name.
+2021-12-28 01:14:00 ::WARNING - register.py - the user has entered the wrong password or user name.
+2021-12-28 01:14:23 ::WARNING - register.py - the user has entered the wrong password or user name.
+2021-12-28 13:08:30 ::ERROR - EducationResp.py - there is no student with this student code in system.
+2021-12-28 13:57:39 ::ERROR - register.py - this course exists in courses file you don't need to register it.
+2021-12-28 14:49:27 ::ERROR - EducationResp.py - there is no student with this student code in system.

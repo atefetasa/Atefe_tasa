@@ -20,36 +20,42 @@ execute_counter_3=0
 def course_registration(course_name, teacher_name, unit, capacity, course_group):
     global execute_counter_1
     if execute_counter_1 == 0:
-        with open('courses.json','r') as file:
+        with open('courses.json', 'r') as file:
             data = json.load(file)
             if data:
                 for dictionary in data:
                     courses.append(dictionary)
-    with open('courses.json','w') as courses_file:
+    with open('courses.json', 'w') as courses_file:
         flag = 0
-        course_dict={'course_name':course_name,'teacher_name':teacher_name,'unit':int(unit),
-                     'capacity':int(capacity),'course_group':course_group}
+        course_dict = {'course_name': course_name, 'teacher_name': teacher_name, 'unit': int(unit),
+                       'capacity': int(capacity), 'course_group': course_group}
         for dictionary in courses:
-            if dictionary == course_dict:
+            if (dictionary['course_name'] == course_dict['course_name']) and \
+                    (dictionary['teacher_name'] == course_dict['teacher_name']) and \
+                    (dictionary['course_group'] == course_dict['course_group']):
                 flag = 1
                 print("this course exists in courses file you don't need to register it.")
                 break
         if flag == 0:
             courses.append(course_dict)
+            print(f"{course_name} course has been successfully added to the courses.")
+            log.info_logger.info(f"{course_name} course has been successfully added to the courses.", exc_info=True)
         json.dump(courses, courses_file)
     execute_counter_1 += 1
-    print(f"{course_name} course has been successfully added to the courses.")
-    log.info_logger.info(f"{course_name} course has been successfully added to the courses.",exc_info=True)
 
 
 def student_registration(first_name,last_name,student_code,national_code,major):
     global execute_counter_2
-    if execute_counter_2 == 0:
-        with open('StudentsLog_In_file.json', 'r') as file:
-            data = json.load(file)
-            if data:
-                for dictionary in data:
-                    students_log_in_information.append(dictionary)
+    try:
+        if execute_counter_2 == 0:
+            with open('StudentsLog_In_file.json', 'r') as file:
+                data = json.load(file)
+                if data:
+                    for dictionary in data:
+                        students_log_in_information.append(dictionary)
+    except Exception as e:
+        print(e)
+        log.warning_logger.error(e)
     with open('StudentsLog_In_file.json', 'w') as file:
         flag = 0
         password=hashlib.sha224(student_code.encode())
