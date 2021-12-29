@@ -25,6 +25,12 @@ class Student:
             return True
 
     def specify_number_of_units(self):
+        """
+        this method specifies new created student object's number of units
+        if some one already has took some units before and want to log in to system one more time in feature
+        this method reads the students_courses.json file and search this student's student_code to allocate
+        the numbers of units that has been saved in this file for this student.
+        """
         with open('students_courses.json', 'r') as file:
             flag = 0
             data = json.load(file)
@@ -40,6 +46,12 @@ class Student:
 
     @staticmethod
     def find_and_make_an_instance(course_name):
+        """
+        if a student wants to take a specific course this method takes the course name and search's it's name by
+        the 'search_in_file' function in the 'courses.json' file .'search_in_file' function returns  the information
+        that have been saved in the 'courses.json' file about a specific course name then the 'find_and_make_an_instance'
+        method takes that information and make a course object by that information.
+        """
         c_list = file_handler.search_in_file('courses.json', 'course_name', course_name)
         dictionary = c_list[0]
         chosen_course = course.Course.add_course(course_name, dictionary['teacher_name'], dictionary['unit'],
