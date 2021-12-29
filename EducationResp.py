@@ -63,7 +63,7 @@ class EducationResponsible:
                 for dictionary in data:
                     if dictionary['student_code'] == student_code:
                         for course in dictionary['courses_list']:
-                            course['course_confirm'] = '1'
+                            course['course_confirm'] = 1
         except Exception as e:
             print(e)
             log.warning_logger.error(e)
@@ -86,7 +86,7 @@ class EducationResponsible:
                     if dictionary['student_code'] == student_code:
                         for course in dictionary['courses_list']:
                             if course['course_name'] == course_name:
-                                course['course_confirm'] = '0'
+                                course['course_confirm'] = 0
         except Exception as e:
             print(e)
             log.warning_logger.error(e)
