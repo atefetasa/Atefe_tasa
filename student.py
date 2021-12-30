@@ -59,6 +59,11 @@ class Student:
         return chosen_course
 
     def select_units(self, course_name):
+        """
+        this method temporary registers the selected units to the courses_list and adds the selected  course
+        number of units to the student 'number_of_units' attribute .
+
+        """
         if self.number_of_units == '':
             self.specify_number_of_units()
         if self.number_of_units < 20:
@@ -79,6 +84,8 @@ class Student:
                                                       'course_group':chosen_course.course_group,
                                                       'course_confirm':0
                                                     })
+                            # in line bellow I append the chosen course object
+                            # to the list which I had provided for the course objects
                             self.chosen_courses_objects.append(chosen_course)
                             log.info_logger.info(f"the student with {self.student_code} student code"
                                                  f" has took {course_name} course.")
@@ -90,8 +97,13 @@ class Student:
         return self
 
     def final_unit_selection_registration(self):
+        """
+        this method registers the selected course or courses to the file and returns True.
+        if it couldn't do that returns False
+        """
         check_units=self.check_unit_numbers_range()
         if check_units:
+            # I used list comprehension for reducing the capacity of each course object that student had took.
             self.chosen_courses_objects=[course_object.reduce_capacity()
                                          for course_object
                                          in self.chosen_courses_objects]
