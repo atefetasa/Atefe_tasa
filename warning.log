@@ -14,3 +14,4 @@
 2021-12-28 13:08:30 ::ERROR - EducationResp.py - there is no student with this student code in system.
 2021-12-28 13:57:39 ::ERROR - register.py - this course exists in courses file you don't need to register it.
 2021-12-28 14:49:27 ::ERROR - EducationResp.py - there is no student with this student code in system.
+2021-12-30 17:43:37 ::WARNING - register.py - the user has entered the wrong password or user name.

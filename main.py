@@ -34,14 +34,17 @@ if log_in == '1':
                     print(f"{course}\n")
                 print('\n')
             else:
-                print("we have no courses for your major to show you.")
+                print("\nwe have no courses for your major to show you.")
             while True:
                 course_name = str(input("Enter the course name you want to choose:"))
                 result=new_student.prevent_duplicate_courses_in_unit_selection(course_name)
                 if result:
                     new_student=new_student.select_units(course_name)
                     new_student.show_chosen_courses()
-                    user_input_2=input("\ndo you want to do the final register?\n 1)Yes\n 2)No")
+                    user_input_2=input("\ndo you want to do the final register?\n"
+                                       "(if you have selected some courses they will be registered in the file by"
+                                       " pressing 'yes' \nelse if you want to choose some other courses too\n"
+                                       "press 'No' to continue.) \n 1)Yes\n 2)No")
                     if user_input_2 == '1':
                         result_2=new_student.final_unit_selection_registration()
                         if result_2:
@@ -132,7 +135,10 @@ elif log_in == '2':
                 if result:
                     new_student=new_student.select_units(course_name)
                     new_student.show_chosen_courses()
-                    user_input_2=input("\ndo you want to do the final register?\n 1)Yes\n 2)No")
+                    user_input_2=input("\ndo you want to do the final register?\n"
+                                       "(if you have selected some courses they will be registered in the file by"
+                                       " pressing 'yes' \nelse if you want to choose some other courses too\n"
+                                       "press 'No' to continue.) \n 1)Yes\n 2)No")
                     if user_input_2 == '1':
                         result_2=new_student.final_unit_selection_registration()
                         if result_2:

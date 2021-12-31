@@ -192,6 +192,8 @@ def lock_acount(file_name,user_name=None,password=None):
     with open(file_name,'w') as myfile:
         json.dump(data,myfile)
     print("your account has been locked.")
+    # after 3 minutes this function calls the 'unlock_account' function to unlock it
+    # during this 3 minutes the screen will be locked
     time.sleep(sec)
     unlock_account(file_name,user_name,password)
 
@@ -242,7 +244,7 @@ def check_entered_password(file_name,user_name,password):
         elif file_name == 'EducationR_Log_In_file.json':
             validation = education_resp_log_in(user_name, password)
         if validation[2] == 1 and validation[3] == 0:
-            print("welcome!you have logged in.")
+            print("welcome!you have logged in.\n")
             log.info_logger.info(f"the user with {password} password has been logged in.")
             break
         elif validation[2] == 1 and validation[3] == 1:

@@ -68,30 +68,37 @@ class Student:
             self.specify_number_of_units()
         if self.number_of_units < 20:
             with open('courses.json','r') as file:
+                flag = 0
                 data=json.load(file)
             for course in data:
                 if course['course_name'] == course_name:
-                    if course['unit']+self.number_of_units > 20:
-                        print("you can Not take this course because your units summation is more than 20 units ")
-                        break
-                    else:
-                        chosen_course=Student.find_and_make_an_instance(course_name)
-                        if chosen_course.check_capacity():
-                            self.number_of_units += chosen_course.unit
-                            self.courses_list.append({'course_name':course_name,
-                                                      'teacher_name':chosen_course.teacher_name,
-                                                      'unit':chosen_course.unit,
-                                                      'course_group':chosen_course.course_group,
-                                                      'course_confirm':0
-                                                    })
-                            # in line bellow I append the chosen course object
-                            # to the list which I had provided for the course objects
-                            self.chosen_courses_objects.append(chosen_course)
-                            log.info_logger.info(f"the student with {self.student_code} student code"
-                                                 f" has took {course_name} course.")
+                    flag = 1
+                    if course['course_group'] == self.major:
+                        if course['unit']+self.number_of_units > 20:
+                            print("\nyou can Not take this course because your units summation is more than 20 units ")
+                            break
                         else:
-                            print("this course doesn't have capacity to take.")
-                        break
+                            chosen_course=Student.find_and_make_an_instance(course_name)
+                            if chosen_course.check_capacity():
+                                self.number_of_units += chosen_course.unit
+                                self.courses_list.append({'course_name':course_name,
+                                                          'teacher_name':chosen_course.teacher_name,
+                                                          'unit':chosen_course.unit,
+                                                          'course_group':chosen_course.course_group,
+                                                          'course_confirm':0
+                                                        })
+                                # in line bellow I append the chosen course object
+                                # to the list which I had provided for the course objects
+                                self.chosen_courses_objects.append(chosen_course)
+                                log.info_logger.info(f"the student with {self.student_code} student code"
+                                                     f" has took {course_name} course.")
+                            else:
+                                print("this course doesn't have capacity to take.")
+                            break
+                    else:
+                        print("\nthis course is not for your major so you can Not take it.")
+            if flag == 0:
+                print("\nYou have entered the course name wrongly.")
         else:
             print("you can not take more than 20 units.")
         return self
@@ -172,7 +179,7 @@ class Student:
 
     def show_chosen_courses(self):
         search_result = file_handler.search_in_file('students_courses.json', 'student_code', self.student_code)
-        print(f"the numbers of units you have chosen: {self.number_of_units}")
+        print(f"the numbers of units you have chosen: {self.number_of_units}\n")
         print("so far you have chosen this courses:")
         if search_result:
             search_result=search_result[0]
